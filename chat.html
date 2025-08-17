@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8" />
+  <title>Chat s AI</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 600px; margin: 2rem auto; }
+    #chat { border: 1px solid #ccc; padding: 1rem; height: 400px; overflow-y: scroll; }
+    .user { color: blue; margin: 0.5rem 0; }
+    .ai { color: green; margin: 0.5rem 0; }
+  </style>
+</head>
+<body>
+
+<h2>Chat s AI</h2>
+<div id="chat"></div>
+<textarea id="input" rows="3" style="width:100%"></textarea><br/>
+<button id="send">Odeslat</button>
+
+<script>
+  const urlParams = new URLSearchParams(window.location.search);
+  const respondent = urlParams.get('respondent');
+  if(!respondent) alert('Chybí respondent ID!');
+
+  const chatDiv = document.getElementById('chat');
+  const input = document.getElementById('input');
+  const sendBtn = document.getElementById('send');
+
+  let finished = false;
+
+  function addMessage(text, sender) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    div.className = sender;
+    chatDiv.appendChild(div);
+    chatDiv.scrollTop = chatDiv.scrollHeight;
+  }
+
+  sendBtn.onclick = async () => {
+    if(finished) {
+      alert('Konverzace je ukončena. Prosím, vraťte se zpět k dotazníku.');
+      return;
+    }
+    const message = input.value.trim();
+    if(!message) return;
+    addMessage(message, 'user');
+    input.value = '';
+    const response = await fetch('/send-message', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ respondent, message })
+    });
+    const data = await response.json();
+    addMessage(data.message, 'ai');
+    if(data.finished) {
+      finished = true;
+      alert('Děkujeme za konverzaci! Nyní budete přesměrováni zpět k dotazníku.');
+      // Přesměrování zpět (přidej adresu post dotazníku)
+      window.location.href = 'https://pavl--naa.limesurvey.net/168223?lang=cs' + encodeURIComponent(respondent);
+    }
+  };
+</script>
+
+</body>
+</html>
