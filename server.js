@@ -9,6 +9,13 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static(__dirname));
 
+
+// Redirect hlavní stránky na chat.html
+app.get('/', (req, res) => {
+  res.redirect('/chat.html');
+});
+
+
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 });
