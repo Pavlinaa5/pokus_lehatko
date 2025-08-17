@@ -25,7 +25,7 @@ const conversations = {}; // { respondentId: { group: 'treatment'/'control', his
 
 // Randomizace 70/30
 function assignGroup() {
-  return Math.random() < 0.7 ? 'treatment' : 'control';
+  return Math.random() < 0.6 ? 'treatment' : 'control';
 }
 
 // Prompty podle skupiny
