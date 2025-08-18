@@ -60,6 +60,23 @@ app.get('/start-chat', (req, res) => {
     return res.status(400).send('Missing parameters');
   }
 
+
+  // Randomizace skupiny
+  const group = assignGroup();
+
+  // Inicializace konverzace v paměti
+  conversations[respondent] = {
+    group,
+    history: [],
+    beliefLevel,
+    conspiracyTheory
+  };
+
+  // Odpověď s instrukcemi pro front-end, můžeš redirectovat na chat stránku
+  res.redirect(`/chat.html?respondent=${encodeURIComponent(respondent)}`);
+});
+
+
  // Endpoint pro instrukce podle skupiny
 app.get('/get-instructions', (req, res) => {
   const { respondent } = req.query;
@@ -79,21 +96,6 @@ app.get('/get-instructions', (req, res) => {
   }
 });
 
-
-  // Randomizace skupiny
-  const group = assignGroup();
-
-  // Inicializace konverzace v paměti
-  conversations[respondent] = {
-    group,
-    history: [],
-    beliefLevel,
-    conspiracyTheory
-  };
-
-  // Odpověď s instrukcemi pro front-end, můžeš redirectovat na chat stránku
-  res.redirect(`/chat.html?respondent=${encodeURIComponent(respondent)}`);
-});
 
 // Endpoint pro odesílání zprávy a získání odpovědi od AI
 app.post('/send-message', async (req, res) => {
