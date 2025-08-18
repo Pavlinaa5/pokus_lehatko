@@ -8,11 +8,13 @@
     #chat { border: 1px solid #ccc; padding: 1rem; height: 400px; overflow-y: scroll; }
     .user { color: blue; margin: 0.5rem 0; }
     .ai { color: green; margin: 0.5rem 0; }
+    #instructions { margin-bottom: 1rem; font-weight: bold; color: darkblue; }
   </style>
 </head>
 <body>
 
 <h2>Chat s AI</h2>
+<div id="instructions"></div>
 <div id="chat"></div>
 <textarea id="input" rows="3" style="width:100%"></textarea><br/>
 <button id="send">Odeslat</button>
@@ -25,6 +27,7 @@
   const chatDiv = document.getElementById('chat');
   const input = document.getElementById('input');
   const sendBtn = document.getElementById('send');
+  const instructionsDiv = document.getElementById('instructions');
 
   let finished = false;
 
@@ -35,6 +38,17 @@
     chatDiv.appendChild(div);
     chatDiv.scrollTop = chatDiv.scrollHeight;
   }
+
+  // 🔹 Načteme instrukce podle skupiny
+  fetch(`/get-instructions?respondent=${respondent}`)
+    .then(res => res.json())
+    .then(data => {
+      instructionsDiv.innerText = data.instructions;
+    })
+    .catch(err => {
+      console.error('Chyba při načítání instrukcí:', err);
+      instructionsDiv.innerText = 'Nepodařilo se načíst instrukce.';
+    });
 
   sendBtn.onclick = async () => {
     if(finished) {
@@ -55,8 +69,8 @@
     if(data.finished) {
       finished = true;
       alert('Děkujeme za konverzaci! Nyní budete přesměrováni zpět k dotazníku.');
-      // Přesměrování zpět (přidej adresu post dotazníku)
-      window.location.href = 'https://pavl--naa.limesurvey.net/168223?lang=cs' + encodeURIComponent(respondent);
+      // Přesměrování zpět (doplnila jsi URL dotazníku, já jen připojil respondent jako query param)
+      window.location.href = 'https://pavl--naa.limesurvey.net/168223?lang=cs&respondent=' + encodeURIComponent(respondent);
     }
   };
 </script>

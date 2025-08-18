@@ -60,6 +60,26 @@ app.get('/start-chat', (req, res) => {
     return res.status(400).send('Missing parameters');
   }
 
+ // Endpoint pro instrukce podle skupiny
+app.get('/get-instructions', (req, res) => {
+  const { respondent } = req.query;
+  const convo = conversations[respondent];
+  if(!convo) {
+    return res.status(404).json({ error: 'Conversation not found' });
+  }
+
+  if (convo.group === 'treatment') {
+    res.json({
+      instructions: `Proč si myslíte, že "${convo.conspiracyTheory}" by mohla být pravdivá?`
+    });
+  } else {
+    res.json({
+      instructions: 'Máte radši kočky nebo psi a proč?'
+    });
+  }
+});
+
+
   // Randomizace skupiny
   const group = assignGroup();
 
